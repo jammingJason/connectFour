@@ -9,7 +9,14 @@ const WIDTH = 7;
 const HEIGHT = 6;
 
 let currPlayer = 1; // active player: 1 or 2
-let board = []; // array of rows, each row is array of cells  (board[y][x])
+let board = [
+	[ null, null, null, null, null, null, null ],
+	[ null, null, null, null, null, null, null ],
+	[ null, null, null, null, null, null, null ],
+	[ null, null, null, null, null, null, null ],
+	[ null, null, null, null, null, null, null ],
+	[ null, null, null, null, null, null, null ]
+]; // array of rows, each row is array of cells  (board[y][x])
 
 /** makeBoard: create in-JS board structure:
  *    board = array of rows, each row is array of cells  (board[y][x])
@@ -23,23 +30,23 @@ function makeBoard() {
 
 function makeHtmlBoard() {
 	// TODO: get "htmlBoard" variable from the item in HTML w/ID of "board"
-
+	const htmlBoard = document.querySelector('#board');
 	// TODO: add comment for this code
-	var top = document.createElement('tr');
+	const top = document.createElement('tr');
 	top.setAttribute('id', 'column-top');
 	top.addEventListener('click', handleClick);
 
-	for (var x = 0; x < WIDTH; x++) {
-		var headCell = document.createElement('td');
+	for (let x = 0; x < WIDTH; x++) {
+		const headCell = document.createElement('td');
 		headCell.setAttribute('id', x);
 		top.append(headCell);
 	}
 	htmlBoard.append(top);
 
 	// TODO: add comment for this code
-	for (var y = 0; y < HEIGHT; y++) {
+	for (let y = 0; y < HEIGHT; y++) {
 		const row = document.createElement('tr');
-		for (var x = 0; x < WIDTH; x++) {
+		for (let x = 0; x < WIDTH; x++) {
 			const cell = document.createElement('td');
 			cell.setAttribute('id', `${y}-${x}`);
 			row.append(cell);
@@ -52,12 +59,20 @@ function makeHtmlBoard() {
 
 function findSpotForCol(x) {
 	// TODO: write the real version of this, rather than always returning 0
-	return 0;
+	return 5;
 }
 
 /** placeInTable: update DOM to place piece into HTML table of board */
 
 function placeInTable(y, x) {
+	const tableCell = document.getElementById(y + '-' + x);
+	let newDiv = document.createElement('div');
+	newDiv.style.width = '50px';
+	newDiv.style.height = '50px';
+	newDiv.style.backgroundColor = 'red';
+	newDiv.style.borderRadius = '100%';
+	tableCell.append(newDiv);
+
 	// TODO: make a div and insert into correct table cell
 }
 
@@ -65,16 +80,17 @@ function placeInTable(y, x) {
 
 function endGame(msg) {
 	// TODO: pop up alert message
+	alert(msg);
 }
 
 /** handleClick: handle click of column top to play piece */
 
 function handleClick(evt) {
 	// get x from ID of clicked cell
-	var x = +evt.target.id;
+	let x = +evt.target.id;
 
 	// get next spot in column (if none, ignore click)
-	var y = findSpotForCol(x);
+	let y = findSpotForCol(x);
 	if (y === null) {
 		return;
 	}
@@ -108,12 +124,12 @@ function checkForWin() {
 
 	// TODO: read and understand this code. Add comments to help you.
 
-	for (var y = 0; y < HEIGHT; y++) {
-		for (var x = 0; x < WIDTH; x++) {
-			var horiz = [ [ y, x ], [ y, x + 1 ], [ y, x + 2 ], [ y, x + 3 ] ];
-			var vert = [ [ y, x ], [ y + 1, x ], [ y + 2, x ], [ y + 3, x ] ];
-			var diagDR = [ [ y, x ], [ y + 1, x + 1 ], [ y + 2, x + 2 ], [ y + 3, x + 3 ] ];
-			var diagDL = [ [ y, x ], [ y + 1, x - 1 ], [ y + 2, x - 2 ], [ y + 3, x - 3 ] ];
+	for (let y = 0; y < HEIGHT; y++) {
+		for (let x = 0; x < WIDTH; x++) {
+			let horiz = [ [ y, x ], [ y, x + 1 ], [ y, x + 2 ], [ y, x + 3 ] ];
+			let vert = [ [ y, x ], [ y + 1, x ], [ y + 2, x ], [ y + 3, x ] ];
+			let diagDR = [ [ y, x ], [ y + 1, x + 1 ], [ y + 2, x + 2 ], [ y + 3, x + 3 ] ];
+			let diagDL = [ [ y, x ], [ y + 1, x - 1 ], [ y + 2, x - 2 ], [ y + 3, x - 3 ] ];
 
 			if (_win(horiz) || _win(vert) || _win(diagDR) || _win(diagDL)) {
 				return true;
