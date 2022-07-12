@@ -8,11 +8,22 @@
 
 /* pieces are div within game table cells: draw as colored circles */
 
-.piece {
+.piece{
   /* TODO: make into circles */
-  margin: 5px;
-  width: 80%;
-  height: 80%;
+  /* position: relative; */
+  height: 50px;
+  width: 50px;
+  animation-duration: 2s;
+  animation-name: slideDown;
+}
+@keyframes slideDown {
+  from {
+    position: absolute;
+  }
+
+  to {
+    position: relative;
+  }
 }
 
 /* TODO: make pieces red/blue,  depending on player 1/2 piece */

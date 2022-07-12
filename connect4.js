@@ -9,14 +9,7 @@ const WIDTH = 7;
 const HEIGHT = 6;
 
 let currPlayer = 1; // active player: 1 or 2
-let board = [
-	[ null, null, null, null, null, null, null ],
-	[ null, null, null, null, null, null, null ],
-	[ null, null, null, null, null, null, null ],
-	[ null, null, null, null, null, null, null ],
-	[ null, null, null, null, null, null, null ],
-	[ null, null, null, null, null, null, null ]
-]; // array of rows, each row is array of cells  (board[y][x])
+let board = []; // array of rows, each row is array of cells  (board[y][x])
 
 /** makeBoard: create in-JS board structure:
  *    board = array of rows, each row is array of cells  (board[y][x])
@@ -24,6 +17,15 @@ let board = [
 
 function makeBoard() {
 	// TODO: set "board" to empty HEIGHT x WIDTH matrix array
+	let newArr = [];
+	for (let x = 0; x < HEIGHT; x++) {
+		for (let i = 0; i < WIDTH; i++) {
+			newArr.push(null);
+		}
+		board.push(newArr);
+		newArr = [];
+	}
+	// console.log(board);
 }
 
 /** makeHtmlBoard: make HTML table and row of column tops. */
@@ -59,21 +61,41 @@ function makeHtmlBoard() {
 
 function findSpotForCol(x) {
 	// TODO: write the real version of this, rather than always returning 0
+	for (let i = 0; i < HEIGHT; i++) {
+		if (board[i][x] !== null) {
+			console.log(i, x);
+			return i - 1;
+		}
+	}
 	return 5;
 }
 
 /** placeInTable: update DOM to place piece into HTML table of board */
 
 function placeInTable(y, x) {
+	// TODO: make a div and insert into correct table cell
+	let strColor = '';
 	const tableCell = document.getElementById(y + '-' + x);
 	let newDiv = document.createElement('div');
-	newDiv.style.width = '50px';
-	newDiv.style.height = '50px';
-	newDiv.style.backgroundColor = 'red';
+	// newDiv.style.width = '50px';
+	// newDiv.style.height = '50px';
+	newDiv.className = 'piece';
+	//  Changes color based on current player
+	if (currPlayer === 1) {
+		strColor = 'red';
+		newDiv.style.backgroundColor = strColor;
+		currPlayer = 2;
+	} else {
+		strColor = 'blue';
+		newDiv.style.backgroundColor = strColor;
+		currPlayer = 1;
+	}
 	newDiv.style.borderRadius = '100%';
+	// newDiv.style.position = 'absolute';
+	newDiv.style.top = '0px';
 	tableCell.append(newDiv);
-
-	// TODO: make a div and insert into correct table cell
+	board[y][x] = strColor;
+	// console.log(board);
 }
 
 /** endGame: announce game end */
