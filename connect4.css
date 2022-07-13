@@ -13,16 +13,21 @@
   /* position: relative; */
   height: 50px;
   width: 50px;
-  animation-duration: 2s;
+  border-radius: 100%;
+  animation-duration: 1s;
   animation-name: slideDown;
 }
 @keyframes slideDown {
   from {
     position: absolute;
+    top: 8px
   }
 
   to {
-    position: relative;
+    top: 8px;
+    top: 100px;
+    
+    /* position: relative; */
   }
 }
 

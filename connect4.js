@@ -63,7 +63,7 @@ function findSpotForCol(x) {
 	// TODO: write the real version of this, rather than always returning 0
 	for (let i = 0; i < HEIGHT; i++) {
 		if (board[i][x] !== null) {
-			console.log(i, x);
+			// console.log(i, x);
 			return i - 1;
 		}
 	}
@@ -77,8 +77,6 @@ function placeInTable(y, x) {
 	let strColor = '';
 	const tableCell = document.getElementById(y + '-' + x);
 	let newDiv = document.createElement('div');
-	// newDiv.style.width = '50px';
-	// newDiv.style.height = '50px';
 	newDiv.className = 'piece';
 	//  Changes color based on current player
 	if (currPlayer === 1) {
@@ -90,11 +88,9 @@ function placeInTable(y, x) {
 		newDiv.style.backgroundColor = strColor;
 		currPlayer = 1;
 	}
-	newDiv.style.borderRadius = '100%';
-	// newDiv.style.position = 'absolute';
+
 	newDiv.style.top = '0px';
 	tableCell.append(newDiv);
-	board[y][x] = strColor;
 	// console.log(board);
 }
 
@@ -103,6 +99,8 @@ function placeInTable(y, x) {
 function endGame(msg) {
 	// TODO: pop up alert message
 	alert(msg);
+	const getPieces = document.getElementsByClassName('piece');
+	getPieces.style.backgroundColor = 'white';
 }
 
 /** handleClick: handle click of column top to play piece */
@@ -110,25 +108,30 @@ function endGame(msg) {
 function handleClick(evt) {
 	// get x from ID of clicked cell
 	let x = +evt.target.id;
-
 	// get next spot in column (if none, ignore click)
 	let y = findSpotForCol(x);
 	if (y === null) {
 		return;
 	}
-
 	// place piece in board and add to HTML table
 	// TODO: add line to update in-memory board
+	board[y][x] = currPlayer;
 	placeInTable(y, x);
-
 	// check for win
 	if (checkForWin()) {
 		return endGame(`Player ${currPlayer} won!`);
 	}
-
 	// check for tie
 	// TODO: check if all cells in board are filled; if so call, call endGame
-
+	let strPieces = '';
+	for (const pieces of board) {
+		for (const piece of pieces) {
+			strPieces += piece;
+		}
+		if (!strPieces.includes('null')) {
+			endGame('The game has tied');
+		}
+	}
 	// switch players
 	// TODO: switch currPlayer 1 <-> 2
 }
