@@ -14,7 +14,6 @@ let board = []; // array of rows, each row is array of cells  (board[y][x])
 /** makeBoard: create in-JS board structure:
  *    board = array of rows, each row is array of cells  (board[y][x])
  */
-
 function makeBoard() {
 	// TODO: set "board" to empty HEIGHT x WIDTH matrix array
 	let newArr = [];
@@ -61,9 +60,12 @@ function makeHtmlBoard() {
 
 function findSpotForCol(x) {
 	// TODO: write the real version of this, rather than always returning 0
+	// console.log(x);
 	for (let i = 0; i < HEIGHT; i++) {
 		if (board[i][x] !== null) {
-			// console.log(i, x);
+			if (i - 1 === -1) {
+				return null;
+			}
 			return i - 1;
 		}
 	}
@@ -74,35 +76,36 @@ function findSpotForCol(x) {
 
 function placeInTable(y, x) {
 	// TODO: make a div and insert into correct table cell
-	let strColor = '';
 	const tableCell = document.getElementById(y + '-' + x);
 	let newDiv = document.createElement('div');
 	newDiv.className = 'piece';
 	//  Changes color based on current player
 	if (currPlayer === 1) {
-		strColor = 'red';
-		newDiv.style.backgroundColor = strColor;
-		currPlayer = 2;
+		newDiv.style.backgroundColor = 'red';
 	} else {
-		strColor = 'blue';
-		newDiv.style.backgroundColor = strColor;
-		currPlayer = 1;
+		newDiv.style.backgroundColor = 'blue';
 	}
-
 	newDiv.style.top = '0px';
 	tableCell.append(newDiv);
-	// console.log(board);
 }
 
 /** endGame: announce game end */
-
 function endGame(msg) {
 	// TODO: pop up alert message
 	alert(msg);
-	const getPieces = document.getElementsByClassName('piece');
-	getPieces.style.backgroundColor = 'white';
+	setTimeout(clearBoard, 2000);
+	player.innerText = 'Turn : Player 1';
 }
 
+const clearBoard = () => {
+	// let getParDiv = document.getElementById('game');
+	let getDiv = document.querySelectorAll('.piece');
+	for (const iterator of getDiv) {
+		iterator.remove();
+	}
+	board = [];
+	makeBoard();
+};
 /** handleClick: handle click of column top to play piece */
 
 function handleClick(evt) {
@@ -122,7 +125,6 @@ function handleClick(evt) {
 		return endGame(`Player ${currPlayer} won!`);
 	}
 	// check for tie
-	// TODO: check if all cells in board are filled; if so call, call endGame
 	let strPieces = '';
 	for (const pieces of board) {
 		for (const piece of pieces) {
@@ -130,10 +132,19 @@ function handleClick(evt) {
 		}
 		if (!strPieces.includes('null')) {
 			endGame('The game has tied');
+			return;
 		}
 	}
 	// switch players
-	// TODO: switch currPlayer 1 <-> 2
+	// () => (currPlayer === 1 ? (currPlayer = 2) : (currPlayer = 1));
+	let player = document.querySelector('#player');
+	if (currPlayer === 1) {
+		currPlayer = 2;
+		player.innerText = 'Turn : Player 2';
+	} else {
+		currPlayer = 1;
+		player.innerText = 'Turn : Player 1';
+	}
 }
 
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
