@@ -1,9 +1,11 @@
 /* game board table */
 
+
 #board td {
   width: 50px;
   height: 50px;
-  border: solid 1px #666;
+  border-width: 4;
+  border: solid 1px rgb(62, 62, 3);
 }
 
 /* pieces are div within game table cells: draw as colored circles */
@@ -16,19 +18,27 @@
   border-radius: 100%;
   animation-duration: 1s;
   animation-name: slideDown;
+  box-shadow: 2px 2px 1px black;
+  
 }
 @keyframes slideDown {
   from {
     position: absolute;
     top: 8px
   }
-
   to {
     top: 8px;
     top: 100px;
     
     /* position: relative; */
   }
+}
+
+#player{
+  font-size: 1.5rem;
+  color: red;
+  display: flex;
+  flex-direction: row;
 }
 
 /* TODO: make pieces red/blue,  depending on player 1/2 piece */

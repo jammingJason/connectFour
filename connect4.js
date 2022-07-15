@@ -4,7 +4,6 @@
  * column until a player gets four-in-a-row (horiz, vert, or diag) or until
  * board fills (tie)
  */
-
 const WIDTH = 7;
 const HEIGHT = 6;
 
@@ -24,7 +23,6 @@ function makeBoard() {
 		board.push(newArr);
 		newArr = [];
 	}
-	// console.log(board);
 }
 
 /** makeHtmlBoard: make HTML table and row of column tops. */
@@ -50,6 +48,7 @@ function makeHtmlBoard() {
 		for (let x = 0; x < WIDTH; x++) {
 			const cell = document.createElement('td');
 			cell.setAttribute('id', `${y}-${x}`);
+			// cell.setAttribute('backgroundColor', 'white');
 			row.append(cell);
 		}
 		htmlBoard.append(row);
@@ -92,22 +91,33 @@ function placeInTable(y, x) {
 /** endGame: announce game end */
 function endGame(msg) {
 	// TODO: pop up alert message
-	alert(msg);
+	const getPlayer = document.getElementById('board');
+	const winAlert = document.createElement('div');
+	// alert(msg);
+	getPlayer.append(winAlert);
+	winAlert.style.position = 'absolute';
+	winAlert.style.top = '25px';
+	winAlert.id = 'alert';
+	winAlert.innerText = msg;
+	winAlert.style.fontSize = '2rem';
 	setTimeout(clearBoard, 2000);
 	player.innerText = 'Turn : Player 1';
+	player.style.color = 'red';
+	// alert();
 }
-
 const clearBoard = () => {
 	// let getParDiv = document.getElementById('game');
 	let getDiv = document.querySelectorAll('.piece');
 	for (const iterator of getDiv) {
 		iterator.remove();
 	}
+	const alertMsg = document.getElementById('alert');
+	alertMsg.innerText = '';
 	board = [];
 	makeBoard();
+	makeDiv('red');
 };
 /** handleClick: handle click of column top to play piece */
-
 function handleClick(evt) {
 	// get x from ID of clicked cell
 	let x = +evt.target.id;
@@ -119,6 +129,7 @@ function handleClick(evt) {
 	// place piece in board and add to HTML table
 	// TODO: add line to update in-memory board
 	board[y][x] = currPlayer;
+
 	placeInTable(y, x);
 	// check for win
 	if (checkForWin()) {
@@ -138,15 +149,30 @@ function handleClick(evt) {
 	// switch players
 	// () => (currPlayer === 1 ? (currPlayer = 2) : (currPlayer = 1));
 	let player = document.querySelector('#player');
+
 	if (currPlayer === 1) {
 		currPlayer = 2;
-		player.innerText = 'Turn : Player 2';
+		player.innerText = 'Turn : Player 2 ';
+		player.style.color = 'blue';
+		makeDiv('blue');
 	} else {
 		currPlayer = 1;
-		player.innerText = 'Turn : Player 1';
+		player.innerText = 'Turn : Player 1 ';
+		player.style.color = 'red';
+		makeDiv('red');
 	}
 }
 
+function makeDiv(color) {
+	const getPlayer = document.getElementById('player');
+	const getDiv = document.createElement('div');
+	getPlayer.append(getDiv);
+	getDiv.style.width = '25px';
+	getDiv.style.height = '25px';
+	getDiv.style.borderRadius = '100%';
+	getDiv.style.backgroundColor = color;
+	getDiv.style.marginLeft = '12px';
+}
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
 
 function checkForWin() {
@@ -154,7 +180,6 @@ function checkForWin() {
 		// Check four cells to see if they're all color of current player
 		//  - cells: list of four (y, x) cells
 		//  - returns true if all are legal coordinates & all match currPlayer
-
 		return cells.every(([ y, x ]) => y >= 0 && y < HEIGHT && x >= 0 && x < WIDTH && board[y][x] === currPlayer);
 	}
 
@@ -166,13 +191,71 @@ function checkForWin() {
 			let vert = [ [ y, x ], [ y + 1, x ], [ y + 2, x ], [ y + 3, x ] ];
 			let diagDR = [ [ y, x ], [ y + 1, x + 1 ], [ y + 2, x + 2 ], [ y + 3, x + 3 ] ];
 			let diagDL = [ [ y, x ], [ y + 1, x - 1 ], [ y + 2, x - 2 ], [ y + 3, x - 3 ] ];
-
+			if (_win(horiz)) {
+				setTimeout(flashSpaces, 1000, horiz);
+			}
+			if (_win(vert)) {
+				setTimeout(flashSpaces, 1000, vert);
+			}
+			if (_win(diagDR)) {
+				setTimeout(flashSpaces, 1000, diagDR);
+			}
+			if (_win(diagDL)) {
+				setTimeout(flashSpaces, 1000, diagDL);
+			}
 			if (_win(horiz) || _win(vert) || _win(diagDR) || _win(diagDL)) {
 				return true;
 			}
 		}
 	}
 }
-
+makeDiv('red');
 makeBoard();
 makeHtmlBoard();
+
+function flashSpaces(strSpaces) {
+	let strWinning = strSpaces.toString();
+	let str1 = '';
+	let str2 = '';
+	let str3 = '';
+	let str4 = '';
+	for (let i = 0; i < strWinning.length; i++) {
+		strWinning = strWinning.replace(',', '');
+	}
+	str1 = strWinning[0] + '-' + strWinning[1];
+	str2 = strWinning[2] + '-' + strWinning[3];
+	str3 = strWinning[4] + '-' + strWinning[5];
+	str4 = strWinning[6] + '-' + strWinning[7];
+
+	const winningPlace1 = document.getElementById(str1);
+	const winningPlace2 = document.getElementById(str2);
+	const winningPlace3 = document.getElementById(str3);
+	const winningPlace4 = document.getElementById(str4);
+	mainColor();
+	let intColor = 0;
+	function mainColor() {
+		if (currPlayer === 1) {
+			winningPlace1.style.backgroundColor = 'red';
+			winningPlace2.style.backgroundColor = 'red';
+			winningPlace3.style.backgroundColor = 'red';
+			winningPlace4.style.backgroundColor = 'red';
+			setTimeout(whiteColor, 100);
+		} else {
+			winningPlace1.style.backgroundColor = 'blue';
+			winningPlace2.style.backgroundColor = 'blue';
+			winningPlace3.style.backgroundColor = 'blue';
+			winningPlace4.style.backgroundColor = 'blue';
+			setTimeout(whiteColor, 100);
+		}
+	}
+	function whiteColor() {
+		winningPlace1.style.backgroundColor = 'white';
+		winningPlace2.style.backgroundColor = 'white';
+		winningPlace3.style.backgroundColor = 'white';
+		winningPlace4.style.backgroundColor = 'white';
+		if (intColor < 3) {
+			setTimeout(mainColor, 100);
+			intColor++;
+		}
+	}
+}
