@@ -93,7 +93,6 @@ function endGame(msg) {
 	// TODO: pop up alert message
 	const getPlayer = document.getElementById('board');
 	const winAlert = document.createElement('div');
-	// alert(msg);
 	getPlayer.append(winAlert);
 	winAlert.style.position = 'absolute';
 	winAlert.style.top = '25px';
@@ -103,19 +102,20 @@ function endGame(msg) {
 	setTimeout(clearBoard, 2000);
 	player.innerText = 'Turn : Player 1';
 	player.style.color = 'red';
-	// alert();
 }
 const clearBoard = () => {
 	// let getParDiv = document.getElementById('game');
+	const alertMsg = document.getElementById('alert');
+	alertMsg.innerText = '';
+	currPlayer = 1;
 	let getDiv = document.querySelectorAll('.piece');
 	for (const iterator of getDiv) {
 		iterator.remove();
 	}
-	const alertMsg = document.getElementById('alert');
-	alertMsg.innerText = '';
 	board = [];
 	makeBoard();
 	makeDiv('red');
+	document.getElementById('board').style.pointerEvents = 'auto';
 };
 /** handleClick: handle click of column top to play piece */
 function handleClick(evt) {
@@ -133,6 +133,7 @@ function handleClick(evt) {
 	placeInTable(y, x);
 	// check for win
 	if (checkForWin()) {
+		document.getElementById('board').style.pointerEvents = 'none';
 		return endGame(`Player ${currPlayer} won!`);
 	}
 	// check for tie
@@ -149,7 +150,6 @@ function handleClick(evt) {
 	// switch players
 	// () => (currPlayer === 1 ? (currPlayer = 2) : (currPlayer = 1));
 	let player = document.querySelector('#player');
-
 	if (currPlayer === 1) {
 		currPlayer = 2;
 		player.innerText = 'Turn : Player 2 ';
@@ -182,9 +182,7 @@ function checkForWin() {
 		//  - returns true if all are legal coordinates & all match currPlayer
 		return cells.every(([ y, x ]) => y >= 0 && y < HEIGHT && x >= 0 && x < WIDTH && board[y][x] === currPlayer);
 	}
-
 	// TODO: read and understand this code. Add comments to help you.
-
 	for (let y = 0; y < HEIGHT; y++) {
 		for (let x = 0; x < WIDTH; x++) {
 			let horiz = [ [ y, x ], [ y, x + 1 ], [ y, x + 2 ], [ y, x + 3 ] ];
@@ -215,44 +213,49 @@ makeHtmlBoard();
 
 function flashSpaces(strSpaces) {
 	let strWinning = strSpaces.toString();
-	let str1 = '';
-	let str2 = '';
-	let str3 = '';
-	let str4 = '';
+
+	// let str1 = '';
+	// let str2 = '';
+	// let str3 = '';
+	// let str4 = '';
 	for (let i = 0; i < strWinning.length; i++) {
 		strWinning = strWinning.replace(',', '');
 	}
-	str1 = strWinning[0] + '-' + strWinning[1];
-	str2 = strWinning[2] + '-' + strWinning[3];
-	str3 = strWinning[4] + '-' + strWinning[5];
-	str4 = strWinning[6] + '-' + strWinning[7];
+	const str1 = strWinning[0] + '-' + strWinning[1];
+	const str2 = strWinning[2] + '-' + strWinning[3];
+	const str3 = strWinning[4] + '-' + strWinning[5];
+	const str4 = strWinning[6] + '-' + strWinning[7];
 
 	const winningPlace1 = document.getElementById(str1);
+	winningPlace1.className = 'winPlace';
 	const winningPlace2 = document.getElementById(str2);
+	winningPlace2.className = 'winPlace';
 	const winningPlace3 = document.getElementById(str3);
+	winningPlace3.className = 'winPlace';
 	const winningPlace4 = document.getElementById(str4);
+	winningPlace4.className = 'winPlace';
 	mainColor();
 	let intColor = 0;
+	//  Changes the background color to the winning player.  Player 1 is red and 2 is blue
 	function mainColor() {
+		const getWinPlaces = document.querySelectorAll('.winPlace');
 		if (currPlayer === 1) {
-			winningPlace1.style.backgroundColor = 'red';
-			winningPlace2.style.backgroundColor = 'red';
-			winningPlace3.style.backgroundColor = 'red';
-			winningPlace4.style.backgroundColor = 'red';
+			for (const winPlaces of getWinPlaces) {
+				winPlaces.style.backgroundColor = 'red';
+			}
 			setTimeout(whiteColor, 100);
 		} else {
-			winningPlace1.style.backgroundColor = 'blue';
-			winningPlace2.style.backgroundColor = 'blue';
-			winningPlace3.style.backgroundColor = 'blue';
-			winningPlace4.style.backgroundColor = 'blue';
+			for (const winPlaces of getWinPlaces) {
+				winPlaces.style.backgroundColor = 'blue';
+			}
 			setTimeout(whiteColor, 100);
 		}
 	}
 	function whiteColor() {
-		winningPlace1.style.backgroundColor = 'white';
-		winningPlace2.style.backgroundColor = 'white';
-		winningPlace3.style.backgroundColor = 'white';
-		winningPlace4.style.backgroundColor = 'white';
+		const getWinPlaces = document.querySelectorAll('.winPlace');
+		for (const winPlaces of getWinPlaces) {
+			winPlaces.style.backgroundColor = 'white';
+		}
 		if (intColor < 3) {
 			setTimeout(mainColor, 100);
 			intColor++;
