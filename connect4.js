@@ -9,7 +9,6 @@ const HEIGHT = 6;
 
 let currPlayer = 1; // active player: 1 or 2
 let board = []; // array of rows, each row is array of cells  (board[y][x])
-
 /** makeBoard: create in-JS board structure:
  *    board = array of rows, each row is array of cells  (board[y][x])
  */
@@ -72,7 +71,6 @@ function findSpotForCol(x) {
 }
 
 /** placeInTable: update DOM to place piece into HTML table of board */
-
 function placeInTable(y, x) {
 	// TODO: make a div and insert into correct table cell
 	const tableCell = document.getElementById(y + '-' + x);
@@ -106,11 +104,16 @@ function endGame(msg) {
 const clearBoard = () => {
 	// let getParDiv = document.getElementById('game');
 	const alertMsg = document.getElementById('alert');
-	alertMsg.innerText = '';
+	alertMsg.remove();
 	currPlayer = 1;
 	let getDiv = document.querySelectorAll('.piece');
 	for (const iterator of getDiv) {
 		iterator.remove();
+	}
+	let getColoredDivs = document.querySelectorAll('.winPlace');
+	// alert(getColoredDivs);
+	for (const item of getColoredDivs) {
+		item.className = 'whiteSpaces';
 	}
 	board = [];
 	makeBoard();
@@ -133,6 +136,7 @@ function handleClick(evt) {
 	placeInTable(y, x);
 	// check for win
 	if (checkForWin()) {
+		// turn off clickable event
 		document.getElementById('board').style.pointerEvents = 'none';
 		return endGame(`Player ${currPlayer} won!`);
 	}
@@ -147,20 +151,19 @@ function handleClick(evt) {
 			return;
 		}
 	}
-	// switch players
-	// () => (currPlayer === 1 ? (currPlayer = 2) : (currPlayer = 1));
 	let player = document.querySelector('#player');
 	if (currPlayer === 1) {
-		currPlayer = 2;
 		player.innerText = 'Turn : Player 2 ';
 		player.style.color = 'blue';
 		makeDiv('blue');
 	} else {
-		currPlayer = 1;
 		player.innerText = 'Turn : Player 1 ';
 		player.style.color = 'red';
 		makeDiv('red');
 	}
+	// switch players
+	currPlayer === 1 ? (currPlayer = 2) : (currPlayer = 1);
+	// alert(changePlayer);
 }
 
 function makeDiv(color) {
@@ -174,7 +177,6 @@ function makeDiv(color) {
 	getDiv.style.marginLeft = '12px';
 }
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
-
 function checkForWin() {
 	function _win(cells) {
 		// Check four cells to see if they're all color of current player
@@ -207,17 +209,10 @@ function checkForWin() {
 		}
 	}
 }
-makeDiv('red');
-makeBoard();
-makeHtmlBoard();
 
 function flashSpaces(strSpaces) {
 	let strWinning = strSpaces.toString();
 
-	// let str1 = '';
-	// let str2 = '';
-	// let str3 = '';
-	// let str4 = '';
 	for (let i = 0; i < strWinning.length; i++) {
 		strWinning = strWinning.replace(',', '');
 	}
@@ -236,6 +231,7 @@ function flashSpaces(strSpaces) {
 	winningPlace4.className = 'winPlace';
 	mainColor();
 	let intColor = 0;
+
 	//  Changes the background color to the winning player.  Player 1 is red and 2 is blue
 	function mainColor() {
 		const getWinPlaces = document.querySelectorAll('.winPlace');
@@ -262,3 +258,7 @@ function flashSpaces(strSpaces) {
 		}
 	}
 }
+
+makeDiv('red');
+makeBoard();
+makeHtmlBoard();
