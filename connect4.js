@@ -27,9 +27,9 @@ function makeBoard() {
 /** makeHtmlBoard: make HTML table and row of column tops. */
 
 function makeHtmlBoard() {
-	// TODO: get "htmlBoard" variable from the item in HTML w/ID of "board"
+	// get "htmlBoard" variable from the item in HTML w/ID of "board"
 	const htmlBoard = document.querySelector('#board');
-	// TODO: add comment for this code
+	// creates the top row of the game where the pieces drop
 	const top = document.createElement('tr');
 	top.setAttribute('id', 'column-top');
 	top.addEventListener('click', handleClick);
@@ -41,7 +41,7 @@ function makeHtmlBoard() {
 	}
 	htmlBoard.append(top);
 
-	// TODO: add comment for this code
+	// Creates the rows and colums based on the WIDTH and HEIGHT values
 	for (let y = 0; y < HEIGHT; y++) {
 		const row = document.createElement('tr');
 		for (let x = 0; x < WIDTH; x++) {
@@ -130,7 +130,6 @@ function handleClick(evt) {
 		return;
 	}
 	// place piece in board and add to HTML table
-	// TODO: add line to update in-memory board
 	board[y][x] = currPlayer;
 
 	placeInTable(y, x);
@@ -141,16 +140,15 @@ function handleClick(evt) {
 		return endGame(`Player ${currPlayer} won!`);
 	}
 	// check for tie
-	let strPieces = '';
-	for (const pieces of board) {
-		for (const piece of pieces) {
-			strPieces += piece;
-		}
-		if (!strPieces.includes('null')) {
-			endGame('The game has tied');
-			return;
-		}
+	function isNotNull(arr) {
+		return arr[0].every((x) => x > 0);
 	}
+
+	if (isNotNull(board)) {
+		endGame('The game has tied');
+		return;
+	}
+
 	let player = document.querySelector('#player');
 	if (currPlayer === 1) {
 		player.innerText = 'Turn : Player 2 ';
@@ -184,13 +182,16 @@ function checkForWin() {
 		//  - returns true if all are legal coordinates & all match currPlayer
 		return cells.every(([ y, x ]) => y >= 0 && y < HEIGHT && x >= 0 && x < WIDTH && board[y][x] === currPlayer);
 	}
-	// TODO: read and understand this code. Add comments to help you.
+
 	for (let y = 0; y < HEIGHT; y++) {
 		for (let x = 0; x < WIDTH; x++) {
 			let horiz = [ [ y, x ], [ y, x + 1 ], [ y, x + 2 ], [ y, x + 3 ] ];
 			let vert = [ [ y, x ], [ y + 1, x ], [ y + 2, x ], [ y + 3, x ] ];
 			let diagDR = [ [ y, x ], [ y + 1, x + 1 ], [ y + 2, x + 2 ], [ y + 3, x + 3 ] ];
 			let diagDL = [ [ y, x ], [ y + 1, x - 1 ], [ y + 2, x - 2 ], [ y + 3, x - 3 ] ];
+
+			// checks to see what direcetion the win is and
+			// flashes the background color based on player
 			if (_win(horiz)) {
 				setTimeout(flashSpaces, 1000, horiz);
 			}
@@ -211,41 +212,49 @@ function checkForWin() {
 }
 
 function flashSpaces(strSpaces) {
-	let strWinning = strSpaces.toString();
+	strSpaces.forEach((space) => {
+		document.getElementById(space[0] + '-' + space[1]).className = 'winPlace';
+	});
+	// let strWinning = strSpaces.toString();
 
-	for (let i = 0; i < strWinning.length; i++) {
-		strWinning = strWinning.replace(',', '');
-	}
-	const str1 = strWinning[0] + '-' + strWinning[1];
-	const str2 = strWinning[2] + '-' + strWinning[3];
-	const str3 = strWinning[4] + '-' + strWinning[5];
-	const str4 = strWinning[6] + '-' + strWinning[7];
+	// for (let i = 0; i < strWinning.length; i++) {
+	// 	strWinning.replace(',', '');
+	// }
+	// const str1 = strSpaces[0] + '-' + strSpaces[1];
+	// const str2 = strSpaces[2] + '-' + strSpaces[3];
+	// const str3 = strSpaces[4] + '-' + strSpaces[5];
+	// const str4 = strSpaces[6] + '-' + strSpaces[7];
 
-	const winningPlace1 = document.getElementById(str1);
-	winningPlace1.className = 'winPlace';
-	const winningPlace2 = document.getElementById(str2);
-	winningPlace2.className = 'winPlace';
-	const winningPlace3 = document.getElementById(str3);
-	winningPlace3.className = 'winPlace';
-	const winningPlace4 = document.getElementById(str4);
-	winningPlace4.className = 'winPlace';
+	// const winningPlace1 = document.getElementById(str1);
+	// winningPlace1.className = 'winPlace';
+	// const winningPlace2 = document.getElementById(str2);
+	// winningPlace2.className = 'winPlace';
+	// const winningPlace3 = document.getElementById(str3);
+	// winningPlace3.className = 'winPlace';
+	// const winningPlace4 = document.getElementById(str4);
+	// winningPlace4.className = 'winPlace';
 	mainColor();
 	let intColor = 0;
 
 	//  Changes the background color to the winning player.  Player 1 is red and 2 is blue
 	function mainColor() {
 		const getWinPlaces = document.querySelectorAll('.winPlace');
-		if (currPlayer === 1) {
-			for (const winPlaces of getWinPlaces) {
-				winPlaces.style.backgroundColor = 'red';
-			}
-			setTimeout(whiteColor, 100);
-		} else {
-			for (const winPlaces of getWinPlaces) {
-				winPlaces.style.backgroundColor = 'blue';
-			}
-			setTimeout(whiteColor, 100);
+		for (const winPlaces of getWinPlaces) {
+			winPlaces.style.backgroundColor = currPlayer === 1 ? 'red' : 'blue';
 		}
+		setTimeout(whiteColor, 100);
+
+		// if (currPlayer === 1) {
+		// 	for (const winPlaces of getWinPlaces) {
+		// 		winPlaces.style.backgroundColor = 'red';
+		// 	}
+		// 	setTimeout(whiteColor, 100);
+		// } else {
+		// 	for (const winPlaces of getWinPlaces) {
+		// 		winPlaces.style.backgroundColor = 'blue';
+		// 	}
+		// 	setTimeout(whiteColor, 100);
+		// }
 	}
 	function whiteColor() {
 		const getWinPlaces = document.querySelectorAll('.winPlace');
